@@ -27,7 +27,7 @@ export default function HeroSearch() {
 					<input className="min-w-0 flex-1 px-3 text-sm outline-none" placeholder="Bạn cần dịch vụ gì hôm nay?" aria-label="Tìm kiếm dịch vụ" value={query} onChange={(event) => setQuery(event.target.value)} />
 					<button className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white max-sm:px-3" type="submit"><Search className="h-4 w-4 sm:hidden" /> <span className="hidden sm:inline">Tìm kiếm</span><span className="sm:hidden">Tìm</span></button>
 				</form>
-				<div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-600 max-sm:mt-3 max-sm:text-[11px] max-sm:text-white">
+				<div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-600 max-sm:mt-3 max-sm:text-[11px] max-sm:text-white">
 					<span className="hidden sm:inline font-bold">Phổ biến:</span>
 					{["Sửa điện", "Vệ sinh nhà cửa", "Sửa máy lạnh", "Chuyển nhà"].map((term) => <button className="rounded-full border border-blue-200 px-2.5 py-1 max-sm:border-white/40" key={term} onClick={() => searchPopularTerm(term)} type="button">{term}</button>)}
 				</div>
