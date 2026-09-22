@@ -10,7 +10,7 @@ import { saveRegisteredAccount } from "../../../features/auth/authStorage";
 const registerSchema = z.object({
 	name: z.string().trim().min(2, "Vui lòng nhập họ tên"),
 	email: z.string().trim().email("Email không hợp lệ"),
-	password: z.string().min(6, "Mật khẩu cần có ít nhất 6 ký tự"),
+	password: z.string().min(6, "Mật khẩu cần có ít nhất 6 ký tự bao gồm cả chữ và số").regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, "Mật khẩu cần có ít nhất 6 ký tự bao gồm cả chữ và số"),
 	confirmPassword: z.string(),
 }).refine((values) => values.password === values.confirmPassword, {
 	message: "Mật khẩu xác nhận không khớp",

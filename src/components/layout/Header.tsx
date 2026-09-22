@@ -1,6 +1,6 @@
 import { Bell, CalendarDays, ChevronDown, LogOut, MapPin, Menu, Search, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { clearAuthUser, getAuthUser, type AuthUser } from "../../features/auth/authStorage";
 import logo from "../../assets/images/logo-nha.png";
 
@@ -9,6 +9,7 @@ type HeaderProps = {
 };
 
 export default function Header({ showSecondaryNav = true }: HeaderProps) {
+	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const [isLocationOpen, setIsLocationOpen] = useState(false);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 	const [query, setQuery] = useState("");
 	const [isAccountOpen, setIsAccountOpen] = useState(false);
 	const [authUser, setAuthUser] = useState<AuthUser | null>(() => getAuthUser());
+	const isActive = (href: string) => href === "/" ? pathname === href : pathname.startsWith(href);
 	const locations = [
         "Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng",
         "Cần Thơ", "Nha Trang", "Huế", "Vũng Tàu", "Bình Dương"];
@@ -124,12 +126,12 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 			{showSecondaryNav && <div className="border-t border-slate-100">
 				<nav className="mx-10 flex items-center gap-7 py-3 text-sm text-slate-600 max-sm:mx-4 max-sm:gap-2 max-sm:overflow-hidden max-sm:py-2">
 					<a className="hidden font-semibold text-blue-700 sm:block" href="/services">Danh mục dịch vụ</a>
-					<a className="rounded-full bg-blue-600 px-4 py-2 font-semibold text-white sm:border-b-2 sm:rounded-none sm:bg-transparent sm:px-0 sm:py-0 sm:text-blue-700" href="/">Trang chủ</a>
-					<a className="hidden sm:block" href="/services">Dịch vụ</a>
-					<a className="hidden sm:block" href="/providers">Nhà cung cấp</a>
-					<a className="hidden sm:block" href="/offers">Ưu đãi</a>
-					<a className="hidden sm:block" href="/blog">Blog</a>
-					<a className="hidden sm:block" href="/support">Hỗ trợ</a>
+					<a className={`${isActive("/") ? "bg-blue-600 font-semibold text-white sm:border-b-2 sm:border-blue-600 sm:bg-transparent sm:text-blue-700" : "text-slate-600 hover:text-blue-700"} rounded-full px-4 py-2 transition-all duration-200 ease-out sm:rounded-none sm:px-0 sm:py-0`} href="/">Trang chủ</a>
+					<a className={`${isActive("/services") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} href="/services">Dịch vụ</a>
+					<a className={`${isActive("/providers") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} href="/providers">Nhà cung cấp</a>
+					<a className={`${isActive("/offers") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} href="/offers">Ưu đãi</a>
+					<a className={`${isActive("/blog") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} href="/blog">Blog</a>
+					<a className={`${isActive("/support") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} href="/support">Hỗ trợ</a>
 				</nav>
 			</div>}
 			<div className="flex items-center gap-2 border-t border-slate-100 px-5 py-2 text-sm sm:hidden">
