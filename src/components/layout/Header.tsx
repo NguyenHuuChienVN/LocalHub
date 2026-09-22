@@ -1,6 +1,6 @@
-import { Bell, CalendarDays, ChevronDown, LogOut, MapPin, Menu, Search, UserRound, X } from "lucide-react";
+import { Bell, CalendarDays, ChevronDown, LogOut, MapPin, Search, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { clearAuthUser, getAuthUser, type AuthUser } from "../../features/auth/authStorage";
 import logo from "../../assets/images/logo-nha.png";
 
@@ -12,9 +12,9 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const [isLocationOpen, setIsLocationOpen] = useState(false);
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [selectedLocation, setSelectedLocation] = useState("Hà Nội");
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
+	const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 	const [query, setQuery] = useState("");
 	const [isAccountOpen, setIsAccountOpen] = useState(false);
 	const [authUser, setAuthUser] = useState<AuthUser | null>(() => getAuthUser());
@@ -56,16 +56,18 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 	return (
 		<header className="border-b border-slate-200 bg-white">
 			<div className="mx-10 flex items-center gap-6 py-3 max-sm:mx-4 max-sm:gap-2 max-sm:py-3">
-				<a className="flex min-w-fit items-center gap-2" href="/">
+				<Link className="flex min-w-fit items-center gap-2" to="/">
 					<img className="h-10 w-10 rounded-[11px] object-cover" src={logo} alt="LocalHub" />
 					<span>
 						<strong className="block text-lg font-bold text-slate-950">LocalHub</strong>
 						<small className="block text-[10px] text-slate-500">Dịch vụ địa phương</small>
 					</span>
-				</a>
+				</Link>
 				<div className="ml-auto flex items-center gap-2 sm:hidden">
-					<button aria-expanded={isMenuOpen} aria-label={isMenuOpen ? "Đóng menu" : "Mở menu"} className="rounded-xl bg-blue-50 p-2.5 text-blue-600" onClick={() => setIsMenuOpen((isOpen) => !isOpen)} type="button">{isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
-					<button aria-label="Thông báo" className="rounded-xl bg-amber-50 p-2.5 text-amber-500" type="button"><Bell className="h-5 w-5" /></button>
+					<div className="relative">
+						<button aria-expanded={isNotificationsOpen} aria-label="Thông báo" className="rounded-xl bg-amber-50 p-2.5 text-amber-500" onClick={() => setIsNotificationsOpen((isOpen) => !isOpen)} type="button"><Bell className="h-5 w-5" /></button>
+						{isNotificationsOpen && <div className="absolute right-0 top-12 z-30 w-64 rounded-xl border border-slate-200 bg-white p-4 text-xs shadow-lg"><strong className="block text-sm text-slate-900">Thông báo</strong><p className="mt-2 leading-5 text-slate-500">Bạn chưa có thông báo mới.</p></div>}
+					</div>
 					<button aria-label="Tìm kiếm" className="rounded-xl bg-green-50 p-2.5 text-green-500" onClick={toggleSearch} type="button">
 						<Search className="h-5 w-5" />
 					</button>
@@ -112,39 +114,36 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 							<span className="min-w-0 flex-1 truncate text-left">{authUser.name}</span><ChevronDown className="h-4 w-4 shrink-0" />
 						</button>
 						{isAccountOpen && <div className="absolute right-0 top-12 z-20 w-52 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
-							<a className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm hover:bg-slate-50" href="/profile"><UserRound className="h-4 w-4 shrink-0 text-blue-600" /> Thông tin cá nhân</a>
-							<a className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm hover:bg-slate-50" href="/bookings"><CalendarDays className="h-4 w-4 shrink-0 text-blue-600" /> Đơn đặt dịch vụ</a>
+							<Link className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm hover:bg-slate-50" to="/profile"><UserRound className="h-4 w-4 shrink-0 text-blue-600" /> Thông tin cá nhân</Link>
+							<Link className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm hover:bg-slate-50" to="/bookings"><CalendarDays className="h-4 w-4 shrink-0 text-blue-600" /> Đơn đặt dịch vụ</Link>
 							<button className="flex h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm text-red-600 hover:bg-red-50" onClick={handleSignOut} type="button"><LogOut className="h-4 w-4 shrink-0" /> Đăng xuất</button>
 						</div>}
 					</div> : <>
-						<a className="hidden lg:block" href="/provider">Trở thành nhà cung cấp</a>
-						<a href="/login">Đăng nhập</a>
-						<a className="rounded-lg bg-blue-600 px-4 py-2 text-white" href="/register">Đăng ký</a>
+						<Link className="hidden lg:block" to="/providers">Trở thành nhà cung cấp</Link>
+						<Link to="/login">Đăng nhập</Link>
+						<Link className="rounded-lg bg-blue-600 px-4 py-2 text-white" to="/register">Đăng ký</Link>
 					</>}
 				</nav>
 			</div>
-			{showSecondaryNav && <div className="border-t border-slate-100">
+			<div className="relative flex items-center gap-2 border-t border-slate-100 px-5 py-2 text-sm sm:hidden">
+				<button aria-expanded={isLocationOpen} aria-haspopup="listbox" className="flex items-center gap-2 font-bold text-slate-700" onClick={() => setIsLocationOpen((isOpen) => !isOpen)} type="button"><MapPin className="h-4 w-4 text-pink-500" />{selectedLocation}<ChevronDown className="h-3 w-3 text-slate-400" /></button>
+				{isLocationOpen && <div className="absolute left-5 top-10 z-30 w-52 rounded-xl border border-slate-200 bg-white p-1 shadow-lg" role="listbox" aria-label="Chọn địa điểm">{locations.map((location) => <button aria-selected={selectedLocation === location} className={`block w-full rounded-lg px-3 py-2 text-left text-sm ${selectedLocation === location ? "font-bold text-blue-600" : "text-slate-700"}`} key={location} onClick={() => handleLocationSelect(location)} role="option" type="button">{location}</button>)}</div>}
+				{authUser ? <Link className="ml-auto font-semibold text-blue-600" to="/profile">{authUser.name}</Link> : <div className="ml-auto flex items-center gap-3">
+					<Link className="font-semibold text-blue-600" to="/login">Đăng nhập</Link>
+					<Link className="rounded-lg bg-blue-600 px-3 py-1.5 font-semibold text-white" to="/register">Đăng ký</Link>
+				</div>}
+			</div>
+			{showSecondaryNav && <div className="hidden border-t border-slate-100 sm:block">
 				<nav className="mx-10 flex items-center gap-7 py-3 text-sm text-slate-600 max-sm:mx-4 max-sm:gap-2 max-sm:overflow-hidden max-sm:py-2">
-					<a className="hidden font-semibold text-blue-700 sm:block" href="/services">Danh mục dịch vụ</a>
-					<a className={`${isActive("/") ? "bg-blue-600 font-semibold text-white sm:border-b-2 sm:border-blue-600 sm:bg-transparent sm:text-blue-700" : "text-slate-600 hover:text-blue-700"} rounded-full px-4 py-2 transition-all duration-200 ease-out sm:rounded-none sm:px-0 sm:py-0`} href="/">Trang chủ</a>
-					<a className={`${isActive("/services") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} href="/services">Dịch vụ</a>
-					<a className={`${isActive("/providers") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} href="/providers">Nhà cung cấp</a>
-					<a className={`${isActive("/offers") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} href="/offers">Ưu đãi</a>
-					<a className={`${isActive("/blog") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} href="/blog">Blog</a>
-					<a className={`${isActive("/support") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} href="/support">Hỗ trợ</a>
+					<Link className="hidden font-semibold text-blue-700 sm:block" to="/services">Danh mục dịch vụ</Link>
+					<Link className={`${isActive("/") ? "bg-blue-600 font-semibold text-white sm:border-b-2 sm:border-blue-600 sm:bg-transparent sm:text-blue-700" : "text-slate-600 hover:text-blue-700"} rounded-full px-4 py-2 transition-all duration-200 ease-out sm:rounded-none sm:px-0 sm:py-0`} to="/">Trang chủ</Link>
+					<Link className={`${isActive("/services") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} to="/services">Dịch vụ</Link>
+					<Link className={`${isActive("/providers") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} to="/providers">Nhà cung cấp</Link>
+					<Link className={`${isActive("/offers") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} to="/offers">Ưu đãi</Link>
+					<Link className={`${isActive("/blog") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} to="/blog">Blog</Link>
+					<Link className={`${isActive("/support") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} to="/support">Hỗ trợ</Link>
 				</nav>
 			</div>}
-			<div className="flex items-center gap-2 border-t border-slate-100 px-5 py-2 text-sm sm:hidden">
-				<MapPin className="h-4 w-4 text-pink-500" />
-				<span className="font-bold text-slate-700">{selectedLocation}</span>
-				<ChevronDown className="h-3 w-3 text-slate-400" />
-				<a className="ml-auto font-semibold text-blue-600" href="/login">Đăng nhập</a>
-			</div>
-			{isMenuOpen && (
-				<nav className="border-t border-slate-100 bg-white px-5 py-2 shadow-sm sm:hidden" aria-label="Menu mobile">
-					{[["Dịch vụ", "/services"], ["Nhà cung cấp", "/providers"], ["Ưu đãi", "/offers"], ["Blog", "/blog"], ["Hỗ trợ", "/support"]].map(([label, href]) => <a className="block border-b border-slate-100 py-3 text-sm font-semibold text-slate-700 last:border-0" href={href} key={label} onClick={() => setIsMenuOpen(false)}>{label}</a>)}
-				</nav>
-			)}
 			{isSearchOpen && (
 				<form className="flex gap-2 border-t border-slate-100 bg-white px-5 py-3 sm:hidden" onSubmit={handleSearch}>
 					<input className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none" placeholder="Bạn cần tìm dịch vụ gì?" value={query} onChange={(event) => setQuery(event.target.value)} aria-label="Tìm kiếm dịch vụ" autoFocus />

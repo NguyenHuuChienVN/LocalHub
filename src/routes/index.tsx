@@ -6,6 +6,7 @@ import LoginPage from "../pages/auth/login/LoginPage";
 import RegisterPage from "../pages/auth/register/RegisterPage";
 import ServiceDetailPage from "../pages/services/detail/ServiceDetailPage";
 import ServicesPage from "../pages/services/list/ServicesPage";
+import BookingPage from "../pages/bookings/new/BookingPage";
 
 export const router = createBrowserRouter([
 	{
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
 			{ path: "/register", element: <RegisterPage /> },
 			{ path: "/services", element: <ServicesPage /> },
 			{ path: "/services/:serviceId", element: <ServiceDetailPage /> },
+			{ path: "/bookings/new", element: <BookingPage /> },
 			{ path: "/providers", element: <ComingSoonPage /> },
 			{ path: "/offers", element: <ComingSoonPage /> },
 			{ path: "/blog", element: <ComingSoonPage /> },
