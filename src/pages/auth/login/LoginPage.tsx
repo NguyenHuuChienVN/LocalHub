@@ -9,7 +9,7 @@ import { getRegisteredAccount, saveAuthUser } from "../../../features/auth/authS
 
 const loginSchema = z.object({
 	email: z.string().trim().email("Email không hợp lệ"),
-	password: z.string().min(6, "Mật khẩu cần có ít nhất 6 ký tự"),
+	password: z.string().min(6, "Mật khẩu cần có ít nhất 6 ký tự bao gồm cả chữ và số").regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, "Mật khẩu cần có ít nhất 6 ký tự bao gồm cả chữ cái viết hoa, ký tự đặc biệt và số "),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;

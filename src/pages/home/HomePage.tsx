@@ -1,5 +1,4 @@
 import { Clock3, Headphones, ShieldCheck, Users } from "lucide-react";
-import CategorySection from "./components/CategorySection";
 import HeroSearch from "./components/HeroSearch";
 import PopularServicesSection from "./components/PopularServicesSection";
 
@@ -16,7 +15,6 @@ export default function HomePage() {
       <section className="mt-[18px] grid grid-cols-2 gap-2.5 sm:hidden">
         {[["10,000+", "Nhà cung cấp uy tín"], ["50,000+", "Đơn hàng hoàn thành"], ["98%", "Khách hàng hài lòng"], ["24/7", "Hỗ trợ tận tâm"]].map(([value, label]) => <div className="flex min-h-[73px] flex-col items-center justify-center rounded-xl border border-slate-200 bg-white" key={label}><strong className="text-lg font-black text-blue-600">{value}</strong><span className="mt-1 text-[10px] text-slate-500">{label}</span></div>)}
       </section>
-        <CategorySection />
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_280px]">
         <PopularServicesSection />
       <aside className="mt-9 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm max-sm:mt-0">

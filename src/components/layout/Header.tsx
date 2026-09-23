@@ -134,14 +134,13 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 				</div>}
 			</div>
 			{showSecondaryNav && <div className="hidden border-t border-slate-100 sm:block">
-				<nav className="mx-10 flex items-center gap-7 py-3 text-sm text-slate-600 max-sm:mx-4 max-sm:gap-2 max-sm:overflow-hidden max-sm:py-2">
-					<Link className="hidden font-semibold text-blue-700 sm:block" to="/services">Danh mục dịch vụ</Link>
+				<nav className="mx-10 flex items-center justify-center gap-7 py-3 text-sm text-slate-600 max-sm:mx-4 max-sm:gap-2 max-sm:overflow-hidden max-sm:py-2">
 					<Link className={`${isActive("/") ? "bg-blue-600 font-semibold text-white sm:border-b-2 sm:border-blue-600 sm:bg-transparent sm:text-blue-700" : "text-slate-600 hover:text-blue-700"} rounded-full px-4 py-2 transition-all duration-200 ease-out sm:rounded-none sm:px-0 sm:py-0`} to="/">Trang chủ</Link>
-					<Link className={`${isActive("/services") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} to="/services">Dịch vụ</Link>
-					<Link className={`${isActive("/providers") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} to="/providers">Nhà cung cấp</Link>
-					<Link className={`${isActive("/offers") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} to="/offers">Ưu đãi</Link>
-					<Link className={`${isActive("/blog") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} to="/blog">Blog</Link>
-					<Link className={`${isActive("/support") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} hidden transition-all duration-200 ease-out sm:block`} to="/support">Hỗ trợ</Link>
+					<Link className={`${isActive("/services") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} transition-all duration-200 ease-out sm:block`} to="/services">Dịch vụ</Link>
+					<Link className={`${isActive("/providers") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} transition-all duration-200 ease-out sm:block`} to="/providers">Nhà cung cấp</Link>
+					<Link className={`${isActive("/offers") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} transition-all duration-200 ease-out sm:block`} to="/offers">Ưu đãi</Link>
+					<Link className={`${isActive("/blog") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} transition-all duration-200 ease-out sm:block`} to="/blog">Blog</Link>
+					<Link className={`${isActive("/support") ? "font-semibold text-blue-700 sm:border-b-2 sm:border-blue-600" : "text-slate-600 hover:text-blue-700"} transition-all duration-200 ease-out sm:block`} to="/support">Hỗ trợ</Link>
 				</nav>
 			</div>}
 			{isSearchOpen && (

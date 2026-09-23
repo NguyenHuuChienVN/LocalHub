@@ -1,12 +1,32 @@
-import { serviceCategories } from "../../../features/services/mocks";
+import { Flower2, Grid2X2, Heart, House, MoreHorizontal, Scissors, SprayCan, Truck, Wrench } from "lucide-react";
 import { Link } from "react-router";
+
+const categoryLinks = [
+	{ label: "Tất cả", icon: Grid2X2, href: "/services" },
+	{ label: "Sửa chữa – Bảo trì", icon: Wrench, href: "/services?category=Sửa chữa điện" },
+	{ label: "Vệ sinh – Dọn dẹp", icon: SprayCan, href: "/services?category=Vệ sinh nhà cửa" },
+	{ label: "Xây dựng – Cải tạo", icon: House, href: "/services?category=Sửa nhà" },
+	{ label: "Vận chuyển", icon: Truck, href: "/services?category=Chuyển nhà" },
+	{ label: "Thợ thủ công", icon: Scissors, href: "/services?category=Lắp đặt nội thất" },
+	{ label: "Gia đình", icon: Heart, href: "/services?category=Vệ sinh nhà cửa" },
+	{ label: "Làm đẹp", icon: Flower2, href: "/services" },
+	{ label: "Khác", icon: MoreHorizontal, href: "/services" },
+];
 
 export default function CategorySection() {
 	return (
 		<section className="mt-9 max-sm:mt-6">
-			<div className="mb-4 flex items-center justify-between"><h2 className="text-xl font-black">Danh mục dịch vụ</h2><Link className="text-sm font-bold text-blue-600" to="/services">Xem tất cả</Link></div>
-			<div className="grid grid-cols-4 gap-3 max-sm:grid-cols-2">
-				{serviceCategories.map((category) => <Link className="flex min-h-24 flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white p-2 text-center text-xs font-semibold text-slate-700 hover:border-blue-300" to="/services" key={category.name}><span className="text-2xl" aria-hidden="true">{category.icon}</span>{category.name}</Link>)}
+			<div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+				{categoryLinks.map(({ label, icon: Icon, href }, index) => (
+					<Link
+						className={`flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-xs font-semibold shadow-sm transition ${index === 0 ? "bg-blue-600 text-white" : "border border-slate-100 bg-white text-slate-500 hover:border-blue-200 hover:text-blue-600"}`}
+						to={href}
+						key={label}
+					>
+						<Icon className="h-4 w-4" />
+						{label}
+					</Link>
+				))}
 			</div>
 		</section>
 	);
