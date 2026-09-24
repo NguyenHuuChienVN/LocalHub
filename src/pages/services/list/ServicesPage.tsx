@@ -59,21 +59,23 @@ export default function ServicesPage() {
 
 	return (
 		<div className="mx-10 py-8 max-sm:mx-4 max-sm:py-5">
-			<div className="max-w-2xl">
-				<p className="text-sm font-bold text-blue-600">Khám phá dịch vụ</p>
-				<h1 className="mt-2 text-3xl font-black text-slate-950 max-sm:text-2xl">Tìm đúng người cho việc bạn cần</h1>
-				<p className="mt-2 text-sm leading-6 text-slate-500">So sánh dịch vụ địa phương uy tín, rõ giá và đặt lịch nhanh chóng.</p>
-			</div>
+			<section className="relative overflow-hidden rounded-2xl bg-cover bg-center px-6 py-8 sm:px-10" style={{ backgroundImage: "url('/bg-dichvu.jpg')" }}>
+				<div className="relative max-w-2xl">
+					<p className="text-sm font-bold text-blue-600">Khám phá dịch vụ</p>
+					<h1 className="mt-2 text-3xl font-black text-black max-sm:text-2xl">Tìm đúng người cho việc bạn cần</h1>
+					<p className="mt-2 text-sm leading-6 text-black">So sánh dịch vụ địa phương uy tín, rõ giá và đặt lịch nhanh chóng.</p>
+				</div>
 
-			<form className="mt-6 flex max-w-3xl gap-2 rounded-xl border border-slate-200 bg-white p-2 shadow-sm" onSubmit={applySearch}>
-				<Search className="ml-2 mt-2.5 h-5 w-5 shrink-0 text-slate-400" />
-				<input className="min-w-0 flex-1 px-2 py-2 text-sm outline-none" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Tìm dịch vụ hoặc nhà cung cấp" aria-label="Tìm dịch vụ hoặc nhà cung cấp" />
-				<button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" type="submit">Tìm kiếm</button>
-			</form>
+				<form className="relative mt-6 flex max-w-3xl gap-2 rounded-xl border border-white/70 bg-white p-2 shadow-sm" onSubmit={applySearch}>
+					<Search className="ml-2 mt-2.5 h-5 w-5 shrink-0 text-slate-400" />
+					<input className="min-w-0 flex-1 px-2 py-2 text-sm outline-none" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Tìm dịch vụ hoặc nhà cung cấp" aria-label="Tìm dịch vụ hoặc nhà cung cấp" />
+					<button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700" type="submit">Tìm kiếm</button>
+				</form>
+			</section>
 			<CategorySection />
 
 			<div className="mt-8 grid gap-8 lg:grid-cols-[230px_minmax(0,1fr)]">
-				<aside className="rounded-xl border border-slate-200 bg-white p-4">
+				<aside className="h-fit self-start rounded-xl border border-slate-200 bg-white p-4">
 					<div className="flex items-center gap-2 font-bold"><Filter className="h-4 w-4 text-blue-600" /> Bộ lọc</div>
 					<label className="mt-5 block text-xs font-bold text-slate-600" htmlFor="category">Danh mục</label>
 					<select id="category" className="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm" value={category} onChange={(event) => setCategory(event.target.value)}>
