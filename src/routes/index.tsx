@@ -11,6 +11,9 @@ import ProvidersPage from "../pages/providers/ProvidersPage";
 import OffersPage from "../pages/offers/OffersPage";
 import BlogPage from "../pages/blog/BlogPage";
 import SupportPage from "../pages/support/SupportPage";
+import ProfilePage from "../pages/profile/ProfilePage";
+import AboutPage from "../pages/about/AboutPage";
+import PrivateRoute from "./PrivateRoute";
 
 export const router = createBrowserRouter([
 	{
@@ -21,13 +24,19 @@ export const router = createBrowserRouter([
 			{ path: "/register", element: <RegisterPage /> },
 			{ path: "/services", element: <ServicesPage /> },
 			{ path: "/services/:serviceId", element: <ServiceDetailPage /> },
-			{ path: "/bookings/new", element: <BookingPage /> },
 			{ path: "/providers", element: <ProvidersPage /> },
 			{ path: "/offers", element: <OffersPage /> },
 			{ path: "/blog", element: <BlogPage /> },
 			{ path: "/support", element: <SupportPage /> },
-			{ path: "/profile", element: <ComingSoonPage /> },
-			{ path: "/bookings", element: <ComingSoonPage /> },
+			{ path: "/profile", element: <ProfilePage /> },
+			{ path: "/about", element: <AboutPage /> },
+			{
+				element: <PrivateRoute />,
+				children: [
+					{ path: "/bookings/new", element: <BookingPage /> },
+					{ path: "/bookings", element: <ComingSoonPage /> },
+				],
+			},
 		],
 	},
 ]);
