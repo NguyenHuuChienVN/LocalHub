@@ -1,32 +1,75 @@
-# React + TypeScript + Vite
+# LocalHub
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+LocalHub là ứng dụng tìm kiếm và đặt dịch vụ tại địa phương. Giao diện hiện sử dụng dữ liệu mẫu cho một số dịch vụ và nhà cung cấp; API Express cung cấp đăng ký, đăng nhập và kiểm tra kết nối PostgreSQL.
 
-Currently, two official plugins are available:
+## Công nghệ
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Frontend: React, TypeScript, Vite, Tailwind CSS
+- Backend: Node.js, Express, TypeScript
+- Database: PostgreSQL
+- Package manager: pnpm
 
-## React Compiler
+## Yêu cầu
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js và pnpm
+- PostgreSQL
 
-## Expanding the Oxlint configuration
+## Cài đặt
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+Từ thư mục gốc, cài dependencies frontend:
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+pnpm install
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Cài dependencies backend:
+
+```bash
+cd server
+pnpm install
+```
+
+## Cấu hình backend
+
+Tạo file môi trường riêng từ file mẫu:
+
+```powershell
+Copy-Item server/.env.example server/.env
+```
+
+Sửa `server/.env` với thông tin PostgreSQL và JWT secret của bạn. Không commit file `.env`; chỉ commit `.env.example` và không điền secrets thật vào đó.
+
+API xác thực cần database và bảng `users` với các cột `id`, `full_name`, `email`, `password_hash`, `phone`, `avatar_url`, `role`, `status`, `created_at`. Email cần unique; tài khoản đăng nhập cần có `status` là `active`. Repo hiện chưa có migration/schema để tự tạo bảng này.
+
+## Chạy ứng dụng
+
+Chạy frontend từ thư mục gốc:
+
+```bash
+pnpm dev
+```
+
+Chạy backend trong terminal khác:
+
+```bash
+cd server
+pnpm dev
+```
+
+Frontend mặc định tại `http://localhost:5173`; API mặc định tại `http://localhost:5000`.
+
+## API
+
+| Method | Endpoint | Mô tả |
+| --- | --- | --- |
+| `GET` | `/` | Kiểm tra API đang chạy |
+| `GET` | `/api/health` | Kiểm tra kết nối PostgreSQL |
+| `POST` | `/api/auth/register` | Đăng ký tài khoản |
+| `POST` | `/api/auth/login` | Đăng nhập, trả về JWT |
+
+## Kiểm tra frontend
+
+```bash
+pnpm build
+pnpm lint
+```
