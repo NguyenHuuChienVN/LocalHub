@@ -158,4 +158,122 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             message: "Lỗi máy chủ, vui lòng thử lại sau",
         });
     }
-}
+};
+
+
+// PUT /api/users/me
+export const updateMe = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = res.locals.user.id;
+        const { fullName, phone, avatarUrl } = req.body ?? {};
+
+        // Trường nào có gửi lên thì phải là chuỗi
+        for (const value of [fullName, phone, avatarUrl]) {
+            if (value !== undefined && typeof value !== "string") {
+                res.status(400).json({ success: false, message: "Dữ liệu không hợp lệ" });
+                return;
+            }
+        }
+
+        if (fullName === undefined && phone === undefined && avatarUrl === undefined) {
+            res.status(400).json({ success: false, message: "Không có thông tin nào để cập nhật" });
+            return;
+        }
+
+        const cleanName = fullName?.trim();
+        if (fullName !== undefined && (!cleanName || cleanName.length > 100)) {
+            res.status(400).json({ success: false, message: "Họ tên phải từ 1 đến 100 ký tự" });
+            return;
+        }
+
+        const cleanPhone = phone?.trim();
+        if (cleanPhone && !/^[0-9+]{9,15}$/.test(cleanPhone)) {
+            res.status(400).json({ success: false, message: "Số điện thoại không hợp lệ" });
+            return;
+        }
+
+        const cleanAvatar = avatarUrl?.trim();
+        if (cleanAvatar && !/^https?:\/\//.test(cleanAvatar)) {
+            res.status(400).json({ success: false, message: "Ảnh đại diện phải là đường dẫn http(s)" });
+            return;
+        }
+
+        // COALESCE: giá trị null nghĩa là "giữ nguyên cột cũ"
+        const result = await db.query(
+            `UPDATE users
+             SET full_name  = COALESCE($1, full_name),
+                 phone      = COALESCE($2, phone),
+                 avatar_url = COALESCE($3, avatar_url),
+                 updated_at = now()
+             WHERE id = $4 AND status = 'active'
+             RETURNING id, full_name, email, phone, avatar_url, role, status, updated_at`,
+            [cleanName ?? null, cleanPhone || null, cleanAvatar || null, userId]
+        );
+
+        if (result.rows.length === 0) {
+            res.status(401).json({ success: false, message: "Tài khoản không tồn tại hoặc đã bị khóa" });
+            return;
+        }
+
+        res.json({ success: true, message: "Cập nhật thành công", data: result.rows[0] });
+    } catch (error: unknown) {
+        console.error("Lỗi khi cập nhật hồ sơ:", error);
+        res.status(500).json({ success: false, message: "Lỗi máy chủ, vui lòng thử lại sau" });
+    }
+};
+
+// PUT /api/users/me/password
+export const changePassword = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = res.locals.user.id;
+        const { currentPassword, newPassword } = req.body ?? {};
+
+        if (
+            typeof currentPassword !== "string" ||
+            typeof newPassword !== "string" ||
+            !currentPassword ||
+            !newPassword
+        ) {
+            res.status(400).json({ success: false, message: "Vui lòng nhập mật khẩu hiện tại và mật khẩu mới" });
+            return;
+        }
+
+        if (newPassword.length < 6 || Buffer.byteLength(newPassword, "utf-8") > 72) {
+            res.status(400).json({ success: false, message: "Mật khẩu mới phải từ 6 ký tự và tối đa 72 byte" });
+            return;
+        }
+
+        if (newPassword === currentPassword) {
+            res.status(400).json({ success: false, message: "Mật khẩu mới phải khác mật khẩu hiện tại" });
+            return;
+        }
+
+        const result = await db.query(
+            "SELECT password_hash FROM users WHERE id = $1 AND status = 'active'",
+            [userId]
+        );
+        const user = result.rows[0];
+
+        if (!user) {
+            res.status(401).json({ success: false, message: "Tài khoản không tồn tại hoặc đã bị khóa" });
+            return;
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password_hash);
+        if (!isMatch) {
+            res.status(400).json({ success: false, message: "Mật khẩu hiện tại không đúng" });
+            return;
+        }
+
+        const newHash = await bcrypt.hash(newPassword, 10);
+        await db.query(
+            "UPDATE users SET password_hash = $1, updated_at = now() WHERE id = $2",
+            [newHash, userId]
+        );
+
+        res.json({ success: true, message: "Đổi mật khẩu thành công" });
+    } catch (error: unknown) {
+        console.error("Lỗi khi đổi mật khẩu:", error);
+        res.status(500).json({ success: false, message: "Lỗi máy chủ, vui lòng thử lại sau" });
+    }
+};
