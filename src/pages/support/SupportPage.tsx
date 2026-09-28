@@ -1,4 +1,4 @@
-import { CalendarCheck, ChevronDown, CreditCard, HelpCircle, Mail, MessageCircle, Phone, RotateCcw, Search, UserRound } from "lucide-react";
+import { CalendarCheck, ChevronDown, CreditCard, Mail, MessageCircle, Phone, RotateCcw, Search, UserRound } from "lucide-react";
 import { useState } from "react";
 
 const topics = [

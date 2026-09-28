@@ -8,6 +8,10 @@ export type VirtualProvider = {
 	completedJobs: number;
 	image: string;
 	verified: boolean;
+	introduction?: string;
+	address?: string;
+	taxCode?: string;
+	registeredAt?: string;
 };
 
 export const virtualProviders: VirtualProvider[] = [

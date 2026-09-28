@@ -26,16 +26,15 @@ export default function ProvidersPage() {
 
 			<div className="mt-8 flex items-center justify-between gap-3">
 				<p className="text-sm text-slate-500"><strong className="text-slate-900">{providers.length}</strong> nhà cung cấp phù hợp</p>
-				<span className="text-xs text-slate-400">Dữ liệu mẫu LocalHub</span>
 			</div>
 
 			{providers.length > 0 ? <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
 				{providers.map((provider) => (
-					<article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm" key={provider.id}>
+						<Link aria-label={`Xem hồ sơ ${provider.name}`} className="group block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md" key={provider.id} to={`/providers/${provider.id}`}>
 						<img className="h-40 w-full object-cover" src={provider.image} alt={provider.name} />
 						<div className="p-4">
 							<div className="flex items-start justify-between gap-2">
-								<h2 className="font-bold text-slate-900">{provider.name}</h2>
+									<h2 className="font-bold text-slate-900 group-hover:text-blue-700">{provider.name}</h2>
 								{provider.verified && <ShieldCheck className="h-5 w-5 shrink-0 text-blue-600" aria-label="Đã xác minh" />}
 							</div>
 							<p className="mt-1 text-xs text-slate-500">{provider.category}</p>
@@ -44,8 +43,8 @@ export default function ProvidersPage() {
 								<span className="flex items-center gap-1 text-slate-600"><Star className="h-4 w-4 fill-amber-400 text-amber-400" />{provider.rating} ({provider.reviewCount})</span>
 								<span className="text-slate-500">{provider.completedJobs} đơn</span>
 							</div>
-						</div>
-					</article>
+							</div>
+						</Link>
 				))}
 			</div> : <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center"><h2 className="font-bold text-slate-900">Chưa tìm thấy nhà cung cấp</h2><p className="mt-2 text-sm text-slate-500">Thử tìm bằng tên dịch vụ hoặc khu vực khác.</p></div>}
 

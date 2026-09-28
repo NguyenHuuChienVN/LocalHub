@@ -13,7 +13,9 @@ function formatPrice(price: number) {
 export default function ServiceCard({ service }: ServiceCardProps) {
 	return (
 		<article className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-			<img className="h-36 w-full object-cover" src={service.image} alt={service.name} />
+			<div className="aspect-video w-full bg-slate-100">
+				<img className="h-full w-full object-cover" src={service.image} alt={service.name} />
+			</div>
 			<div className="p-4">
 				<h3 className="font-bold text-slate-900">{service.name}</h3>
 				<p className="mt-1 text-xs text-slate-500">{service.provider}</p>

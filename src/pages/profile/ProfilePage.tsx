@@ -1,10 +1,13 @@
 import {
 	Bell,
+	CalendarCheck,
 	ChevronRight,
 	CircleHelp,
+	CreditCard,
 	Heart,
 	Info,
 	LockKeyhole,
+	Mail,
 	MapPin,
 	ReceiptText,
 	Ticket,
@@ -25,12 +28,15 @@ const supportRows = [
 	{ icon: Bell, label: "Thông báo", href: "/support" },
 	{ icon: LockKeyhole, label: "Bảo mật", href: "/profile" },
 	{ icon: CircleHelp, label: "Trung tâm hỗ trợ", href: "/support" },
+	{ icon: CalendarCheck, label: "Đặt lịch và hủy lịch", href: "/support" },
+	{ icon: CreditCard, label: "Thanh toán và hoàn tiền", href: "/support" },
+	{ icon: Mail, label: "Liên hệ hỗ trợ", href: "/support" },
 ];
 
 function AccountRow({ icon: Icon, label, href }: { icon: typeof UserRound; label: string; href: string }) {
 	return (
-		<Link className="flex min-h-11 items-center gap-4 border-b border-slate-200 px-1 py-3 text-sm font-semibold last:border-b-0 max-sm:border-slate-700" to={href}>
-			<Icon className="h-5 w-5 shrink-0 text-blue-600 max-sm:text-slate-300" />
+		<Link className="flex min-h-11 items-center gap-4 border-b border-slate-200 px-1 py-3 text-sm font-semibold text-slate-800 last:border-b-0" to={href}>
+			<Icon className="h-5 w-5 shrink-0 text-blue-600" />
 			<span className="flex-1">{label}</span>
 			<ChevronRight className="h-4 w-4 text-slate-400" />
 		</Link>
@@ -76,7 +82,7 @@ export default function ProfilePage() {
 	}
 
 	return (
-		<div className="min-h-[calc(100vh-136px)] bg-slate-50 px-4 py-5 sm:px-10 sm:py-8 max-sm:bg-[#181818] max-sm:text-white">
+		<div className="min-h-[calc(100vh-136px)] bg-white px-4 py-5 text-slate-900 sm:px-10 sm:py-8">
 			<section className="mx-auto max-w-2xl">
 				<div className="flex items-center gap-3">
 					<div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-950 text-lg font-bold text-blue-300">{authUser.name.slice(0, 2).toUpperCase()}</div>
@@ -84,15 +90,15 @@ export default function ProfilePage() {
 					<ChevronRight className="h-5 w-5 text-slate-400" />
 				</div>
 				<div className="mt-5 grid grid-cols-3 gap-2">
-					{[["12", "Đơn hàng"], ["3", "Ưu đãi"], ["240", "Điểm"]].map(([value, label]) => <div className="rounded-lg bg-white px-2 py-3 text-center text-slate-900 max-sm:bg-[#111111] max-sm:text-white" key={label}><strong className="block text-lg font-black">{value}</strong><span className="text-xs text-slate-500 max-sm:text-slate-300">{label}</span></div>)}
+					{[["12", "Đơn hàng"], ["3", "Ưu đãi"], ["240", "Điểm"]].map(([value, label]) => <div className="rounded-lg border border-slate-200 bg-white px-2 py-3 text-center text-slate-900" key={label}><strong className="block text-lg font-black">{value}</strong><span className="text-xs text-slate-500">{label}</span></div>)}
 				</div>
-				<div className="mt-4 rounded-lg bg-white px-3 text-slate-900 shadow-sm max-sm:bg-[#181818] max-sm:text-white max-sm:shadow-none">
+				<div className="mt-4 rounded-lg border border-slate-200 bg-white px-3 text-slate-900 shadow-sm">
 					{accountRows.map((row) => <AccountRow {...row} key={row.label} />)}
 				</div>
-				<div className="mt-4 rounded-lg bg-white px-3 text-slate-900 shadow-sm max-sm:bg-[#181818] max-sm:text-white max-sm:shadow-none">
+				<div className="mt-4 rounded-lg border border-slate-200 bg-white px-3 text-slate-900 shadow-sm">
 					{supportRows.map((row) => <AccountRow {...row} key={row.label} />)}
 				</div>
-				<button className="mt-4 w-full rounded-lg border border-red-500 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 max-sm:hover:bg-red-950/30" onClick={handleSignOut} type="button">Đăng xuất</button>
+				<button className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700" onClick={handleSignOut} type="button">Đăng xuất</button>
 			</section>
 		</div>
 	);
