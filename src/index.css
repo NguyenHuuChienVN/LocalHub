@@ -36,3 +36,33 @@ textarea,
 select {
   font: inherit;
 }
+
+input.auth-password-input::-ms-reveal,
+input.auth-password-input::-ms-clear {
+  display: none;
+}
+
+.sign-out-dialog-backdrop {
+  animation: sign-out-backdrop-enter 160ms ease-out both;
+}
+
+.sign-out-dialog-panel {
+  animation: sign-out-panel-enter 180ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes sign-out-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sign-out-panel-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sign-out-dialog-backdrop,
+  .sign-out-dialog-panel {
+    animation: none;
+  }
+}

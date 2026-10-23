@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarDays, CheckCircle2, Clock3, MapPin, MessageCircle, RotateCcw, ShieldCheck, Star } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock3, MapPin, MessageCircle, RotateCcw, ShieldCheck, Star } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { getAuthUser } from "../../../features/auth/authStorage";
 import { popularServices } from "../../../features/services/mocks";

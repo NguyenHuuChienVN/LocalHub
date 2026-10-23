@@ -13,6 +13,7 @@ import OffersPage from "../pages/offers/OffersPage";
 import BlogPage from "../pages/blog/BlogPage";
 import SupportPage from "../pages/support/SupportPage";
 import ProfilePage from "../pages/profile/ProfilePage";
+import EditProfilePage from "../pages/profile/EditProfilePage";
 import AboutPage from "../pages/about/AboutPage";
 import PrivateRoute from "./PrivateRoute";
 
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
 				children: [
 					{ path: "/bookings/new", element: <BookingPage /> },
 					{ path: "/bookings", element: <BookingsPage /> },
+					{ path: "/profile/edit", element: <EditProfilePage /> },
 				],
 			},
 		],

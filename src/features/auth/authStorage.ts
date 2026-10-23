@@ -1,22 +1,31 @@
 const AUTH_STORAGE_KEY = "localhub-auth";
-const REGISTERED_ACCOUNT_KEY = "localhub-registered-account";
 
 export type AuthUser = {
 	email: string;
 	name: string;
+	token?: string;
+	phone?: string | null;
 };
 
-export type RegisteredAccount = AuthUser & {
-	password: string;
-};
-
-export function saveAuthUser(user: AuthUser) {
-	localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+export function saveAuthUser(user: AuthUser, remember = true) {
+	const storage = remember ? localStorage : sessionStorage;
+	const otherStorage = remember ? sessionStorage : localStorage;
+	otherStorage.removeItem(AUTH_STORAGE_KEY);
+	storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
 	window.dispatchEvent(new Event("localhub-auth-change"));
 }
 
+export function updateAuthUser(updates: Partial<AuthUser>) {
+	const currentUser = getAuthUser();
+	if (!currentUser) return null;
+
+	const updatedUser = { ...currentUser, ...updates };
+	saveAuthUser(updatedUser, localStorage.getItem(AUTH_STORAGE_KEY) !== null);
+	return updatedUser;
+}
+
 export function getAuthUser(): AuthUser | null {
-	const storedUser = localStorage.getItem(AUTH_STORAGE_KEY);
+	const storedUser = localStorage.getItem(AUTH_STORAGE_KEY) ?? sessionStorage.getItem(AUTH_STORAGE_KEY);
 
 	if (!storedUser) {
 		return null;
@@ -26,30 +35,13 @@ export function getAuthUser(): AuthUser | null {
 		return JSON.parse(storedUser) as AuthUser;
 	} catch {
 		localStorage.removeItem(AUTH_STORAGE_KEY);
+		sessionStorage.removeItem(AUTH_STORAGE_KEY);
 		return null;
 	}
 }
 
 export function clearAuthUser() {
 	localStorage.removeItem(AUTH_STORAGE_KEY);
+	sessionStorage.removeItem(AUTH_STORAGE_KEY);
 	window.dispatchEvent(new Event("localhub-auth-change"));
-}
-
-export function saveRegisteredAccount(account: RegisteredAccount) {
-	localStorage.setItem(REGISTERED_ACCOUNT_KEY, JSON.stringify(account));
-}
-
-export function getRegisteredAccount(): RegisteredAccount | null {
-	const storedAccount = localStorage.getItem(REGISTERED_ACCOUNT_KEY);
-
-	if (!storedAccount) {
-		return null;
-	}
-
-	try {
-		return JSON.parse(storedAccount) as RegisteredAccount;
-	} catch {
-		localStorage.removeItem(REGISTERED_ACCOUNT_KEY);
-		return null;
-	}
 }

@@ -101,7 +101,7 @@ export default function BookingsPage() {
 					{visibleBookings.length === 0 ? <section className="rounded-xl border border-dashed border-slate-300 bg-white px-5 py-12 text-center"><p className="font-bold text-slate-800">Chưa có đơn trong mục này</p><p className="mt-1 text-sm text-slate-500">Bạn có thể xem lại các đơn ở bộ lọc khác.</p></section> : visibleBookings.map((booking) => {
 						const service = popularServices.find((item) => item.id === booking.serviceId);
 						if (!service) return null;
-						return <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+						return <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" key={booking.id}>
 							<div className="flex flex-wrap items-start justify-between gap-3">
 								<div className="min-w-0"><h2 className="font-bold text-slate-900">{service.name}</h2><p className="mt-0.5 text-sm text-slate-500">{service.provider}</p></div>
 								<span className={`rounded-full px-3 py-1 text-xs font-bold ${statusStyles[booking.status]}`}>{statusLabels[booking.status]}</span>

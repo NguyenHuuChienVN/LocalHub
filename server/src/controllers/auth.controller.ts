@@ -2,8 +2,10 @@ import { Request, Response } from 'express';
 import bcrypt from "bcryptjs";
 import { db } from "../config/db.ts";
 import jwt, { SignOptions } from "jsonwebtoken";
+import { checkAntiSpam, clearSuccessfulAttempt, recordFailedAttempt } from "../utils/antiSpam";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^\+?\d{7,15}$/;
 
 export const register = async (req: Request, res: Response): Promise<void> => {
     try{
@@ -25,6 +27,15 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     }
     const cleaName = fullName.trim();
     const normalizedEmail = email.trim().toLowerCase();
+
+    const antiSpamCheck = checkAntiSpam(req, normalizedEmail);
+    if (!antiSpamCheck.allowed) {
+        res.status(429).json({
+            success: false,
+            message: antiSpamCheck.message ?? "Quá nhiều lần thử sai. Vui lòng thử lại sau",
+        });
+        return;
+    }
 
     if (cleaName.length > 100 || normalizedEmail.length > 255) {
         res.status(400).json({
@@ -64,6 +75,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         RETURNING id, full_Name, email, phone, created_at`,
         [cleaName, normalizedEmail, passwordHash, cleanPhone]
     );
+    clearSuccessfulAttempt(req, normalizedEmail);
     res.status(201).json({
         success: true,
         message: "Đăng ký thành công",
@@ -94,37 +106,67 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 const DUMMY_HASH = bcrypt.hashSync("dummy-password", 10);
 export const login = async (req: Request, res: Response): Promise<void> => {
     try{
-        const { email, password } = req.body ?? {};
+        const { identifier: submittedIdentifier, email: legacyEmail, password } = req.body ?? {};
+        const identifier = typeof submittedIdentifier === "string" ? submittedIdentifier : legacyEmail;
         if (
-            typeof email !== "string" ||
+            typeof identifier !== "string" ||
             typeof password !== "string" ||
-            !email.trim() ||
+            !identifier.trim() ||
             !password
         ) {
             res.status(400).json({
                 success:false,
-                message: "Vui lòng nhập email và mật khẩu",
+                message: "Vui lòng nhập email hoặc số điện thoại và mật khẩu",
             })
             return;
         }
-        const normalizedEmail = email.trim().toLowerCase();
+        const trimmedIdentifier = identifier.trim();
+        const isEmail = EMAIL_REGEX.test(trimmedIdentifier);
+        const isPhone = PHONE_REGEX.test(trimmedIdentifier);
+        if (!isEmail && !isPhone) {
+            res.status(400).json({
+                success: false,
+                message: "Email hoặc số điện thoại không hợp lệ",
+            });
+            return;
+        }
+        const normalizedIdentifier = isEmail ? trimmedIdentifier.toLowerCase() : trimmedIdentifier;
+
+        const antiSpamCheck = checkAntiSpam(req, normalizedIdentifier);
+        if (!antiSpamCheck.allowed) {
+            res.status(429).json({
+                success: false,
+                message: antiSpamCheck.message ?? "Quá nhiều lần thử sai. Vui lòng thử lại sau",
+            });
+            return;
+        }
 
         const result = await db.query(
             `SELECT id, full_name, email, password_hash, phone, avatar_url, role, status
             FROM users
-            WHERE email = $1`,
-            [normalizedEmail]
+            WHERE ${isEmail ? "email" : "phone"} = $1
+            LIMIT 2`,
+            [normalizedIdentifier]
         );
+        if (result.rows.length > 1) {
+            res.status(409).json({
+                success: false,
+                message: "Số điện thoại đang gắn với nhiều tài khoản. Vui lòng thử lại",
+            });
+            return;
+        }
         const user = result.rows[0];
 
         const isMatch = await bcrypt.compare(
             password,
             user ? user.password_hash : DUMMY_HASH
         );
+
         if ( !user || !isMatch ) {
+            recordFailedAttempt(req, normalizedIdentifier);
             res.status(401).json({
                 success: false,
-                message: "Email hoặc mật khẩu không đúng",
+                message: "Email hoặc số điện thoại hoặc mật khẩu không đúng",
             });
             return;
         }
@@ -139,6 +181,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         if (!secrt) {
             throw new Error("Biến môi trường JWT_SECRET chưa được thiết lập");
         }
+        clearSuccessfulAttempt(req, normalizedIdentifier);
         const token = jwt.sign({sub: user.id, role:user.role}, secrt, {
             expiresIn: (process.env.JWT_EXPIRES_IN || "7d") as SignOptions["expiresIn"],
         });

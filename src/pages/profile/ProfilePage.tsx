@@ -14,8 +14,9 @@ import {
 	UserRound,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { clearAuthUser, getAuthUser, type AuthUser } from "../../features/auth/authStorage";
+import SignOutDialog from "../../components/common/SignOutDialog";
 
 const accountRows = [
 	{ icon: ReceiptText, label: "Lịch sử đơn hàng", href: "/bookings" },
@@ -45,7 +46,10 @@ function AccountRow({ icon: Icon, label, href }: { icon: typeof UserRound; label
 
 export default function ProfilePage() {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const [authUser, setAuthUser] = useState<AuthUser | null>(() => getAuthUser());
+	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
+	const profileUpdated = (location.state as { profileUpdated?: boolean } | null)?.profileUpdated;
 
 	useEffect(() => {
 		function refreshAuthUser() {
@@ -57,8 +61,13 @@ export default function ProfilePage() {
 	}, []);
 
 	function handleSignOut() {
+		setIsSignOutOpen(true);
+	}
+
+	function confirmSignOut() {
 		clearAuthUser();
-		navigate("/profile", { replace: true });
+		setIsSignOutOpen(false);
+		navigate("/", { replace: true });
 	}
 
 	if (!authUser) {
@@ -84,11 +93,12 @@ export default function ProfilePage() {
 	return (
 		<div className="min-h-[calc(100vh-136px)] bg-white px-4 py-5 text-slate-900 sm:px-10 sm:py-8">
 			<section className="mx-auto max-w-2xl">
-				<div className="flex items-center gap-3">
+				<Link aria-label="Chỉnh sửa hồ sơ" className="group flex items-center gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-blue-500" to="/profile/edit">
 					<div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-950 text-lg font-bold text-blue-300">{authUser.name.slice(0, 2).toUpperCase()}</div>
-					<div className="min-w-0 flex-1"><h1 className="truncate text-lg font-black">{authUser.name}</h1><p className="truncate text-sm text-slate-500 max-sm:text-slate-300">{authUser.email}</p></div>
-					<ChevronRight className="h-5 w-5 text-slate-400" />
-				</div>
+					<div className="min-w-0 flex-1"><h1 className="truncate text-lg font-black">{authUser.name}</h1><p className="truncate text-sm text-slate-500 max-sm:text-slate-300">{authUser.email}</p><p className="truncate text-xs text-slate-500">{authUser.phone || "Chưa thêm số điện thoại"}</p></div>
+					<ChevronRight className="h-5 w-5 text-slate-400 transition group-hover:translate-x-0.5" />
+				</Link>
+				{profileUpdated && <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800" role="status">Hồ sơ đã được cập nhật.</p>}
 				<div className="mt-5 grid grid-cols-3 gap-2">
 					{[["12", "Đơn hàng"], ["3", "Ưu đãi"], ["240", "Điểm"]].map(([value, label]) => <div className="rounded-lg border border-slate-200 bg-white px-2 py-3 text-center text-slate-900" key={label}><strong className="block text-lg font-black">{value}</strong><span className="text-xs text-slate-500">{label}</span></div>)}
 				</div>
@@ -99,6 +109,7 @@ export default function ProfilePage() {
 					{supportRows.map((row) => <AccountRow {...row} key={row.label} />)}
 				</div>
 				<button className="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700" onClick={handleSignOut} type="button">Đăng xuất</button>
+				{isSignOutOpen && <SignOutDialog onCancel={() => setIsSignOutOpen(false)} onConfirm={confirmSignOut} />}
 			</section>
 		</div>
 	);

@@ -2,6 +2,7 @@ import { Bell, CalendarDays, ChevronDown, LogOut, MapPin, Search, UserRound } fr
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { clearAuthUser, getAuthUser, type AuthUser } from "../../features/auth/authStorage";
+import SignOutDialog from "../common/SignOutDialog";
 import logo from "../../assets/images/logo-nha.png";
 
 type HeaderProps = {
@@ -17,6 +18,7 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 	const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 	const [query, setQuery] = useState("");
 	const [isAccountOpen, setIsAccountOpen] = useState(false);
+	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
 	const [authUser, setAuthUser] = useState<AuthUser | null>(() => getAuthUser());
 	const isActive = (href: string) => href === "/" ? pathname === href : pathname.startsWith(href);
 	const locations = [
@@ -47,10 +49,15 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 	}, []);
 
 	function handleSignOut() {
+		setIsAccountOpen(false);
+		setIsSignOutOpen(true);
+	}
+
+	function confirmSignOut() {
 		clearAuthUser();
 		setAuthUser(null);
-		setIsAccountOpen(false);
-		navigate("/");
+		setIsSignOutOpen(false);
+		navigate("/", { replace: true });
 	}
 
 	return (
@@ -149,6 +156,7 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 					<button className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-bold text-white" type="submit">Tìm</button>
 				</form>
 			)}
+			{isSignOutOpen && <SignOutDialog onCancel={() => setIsSignOutOpen(false)} onConfirm={confirmSignOut} />}
 		</header>
 	);
 }
