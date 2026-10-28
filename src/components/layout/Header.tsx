@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { clearAuthUser, getAuthUser, type AuthUser } from "../../features/auth/authStorage";
 import SignOutDialog from "../common/SignOutDialog";
 import logo from "../../assets/images/logo-nha.png";
+import { useProfileAvatar } from "../../hooks/useProfileAvatar";
 
 type HeaderProps = {
 	showSecondaryNav?: boolean;
@@ -20,6 +21,7 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 	const [isAccountOpen, setIsAccountOpen] = useState(false);
 	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
 	const [authUser, setAuthUser] = useState<AuthUser | null>(() => getAuthUser());
+	const avatar = useProfileAvatar(authUser?.avatarUrl, authUser?.token);
 	const isActive = (href: string) => href === "/" ? pathname === href : pathname.startsWith(href);
 	const locations = [
         "Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Hải Phòng",
@@ -117,7 +119,9 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 				<nav className="ml-auto hidden items-center gap-4 text-sm font-semibold text-slate-700 sm:flex">
 					{authUser ? <div className="relative">
 						<button aria-expanded={isAccountOpen} className="flex h-11 w-52 items-center gap-2 rounded-lg border border-slate-200 px-2.5" onClick={() => setIsAccountOpen((isOpen) => !isOpen)} type="button">
-							<img className="h-8 w-8 shrink-0 rounded-full object-cover" src={logo} alt="" />
+							{avatar.src
+								? <img className="h-8 w-8 shrink-0 rounded-full object-cover" src={avatar.src} alt="" />
+								: <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-700">{authUser.name.trim().slice(0, 2).toUpperCase()}</span>}
 							<span className="min-w-0 flex-1 truncate text-left">{authUser.name}</span><ChevronDown className="h-4 w-4 shrink-0" />
 						</button>
 						{isAccountOpen && <div className="absolute right-0 top-12 z-20 w-52 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">

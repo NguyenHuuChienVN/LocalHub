@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { db } from "../config/db.ts";
 
-export const authenticate = (
+export const authenticate = async (
     req: Request,
     res: Response,
     next: NextFunction
-): void => {
+): Promise<void> => {
     // Header có dạng: Authorization: Bearer <token>
     const header = req.headers.authorization;
 
@@ -26,23 +27,37 @@ export const authenticate = (
         return;
     }
 
+    let payload: jwt.JwtPayload;
     try {
-        const payload = jwt.verify(token, secret);
-
-        if (typeof payload === "string" || !payload.sub) {
+        const decoded = jwt.verify(token, secret);
+        if (typeof decoded === "string" || !decoded.sub) {
             res.status(401).json({ success: false, message: "Token không hợp lệ" });
             return;
         }
-
-        // Lưu thông tin user để controller phía sau dùng
-        res.locals.user = { id: payload.sub, role: payload.role };
-        next();
+        payload = decoded;
     } catch {
-        // Token sai chữ ký, bị sửa, hoặc đã hết hạn
         res.status(401).json({
             success: false,
             message: "Token không hợp lệ hoặc đã hết hạn",
         });
+        return;
+    }
+
+    try {
+        const result = await db.query(
+            "SELECT id, role FROM users WHERE id = $1 AND status = 'active'",
+            [payload.sub]
+        );
+        const user = result.rows[0];
+        if (!user) {
+            res.status(401).json({ success: false, message: "Tài khoản không tồn tại hoặc đã bị khóa" });
+            return;
+        }
+        res.locals.user = { id: user.id, role: user.role };
+        next();
+    } catch (error: unknown) {
+        console.error("Lỗi khi xác thực tài khoản:", error);
+        res.status(500).json({ success: false, message: "Không thể xác thực tài khoản" });
     }
 };
 

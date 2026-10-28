@@ -5,6 +5,13 @@ export type AuthUser = {
 	name: string;
 	token?: string;
 	phone?: string | null;
+	avatarUrl?: string | null;
+	birthDate?: string | null;
+	gender?: "male" | "female" | "other" | null;
+	city?: string | null;
+	district?: string | null;
+	address?: string | null;
+	bio?: string | null;
 };
 
 export function saveAuthUser(user: AuthUser, remember = true) {

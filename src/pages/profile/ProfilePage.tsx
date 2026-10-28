@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { clearAuthUser, getAuthUser, type AuthUser } from "../../features/auth/authStorage";
 import SignOutDialog from "../../components/common/SignOutDialog";
+import { useProfileAvatar } from "../../hooks/useProfileAvatar";
 
 const accountRows = [
 	{ icon: ReceiptText, label: "Lịch sử đơn hàng", href: "/bookings" },
@@ -50,6 +51,7 @@ export default function ProfilePage() {
 	const [authUser, setAuthUser] = useState<AuthUser | null>(() => getAuthUser());
 	const [isSignOutOpen, setIsSignOutOpen] = useState(false);
 	const profileUpdated = (location.state as { profileUpdated?: boolean } | null)?.profileUpdated;
+	const avatar = useProfileAvatar(authUser?.avatarUrl, authUser?.token);
 
 	useEffect(() => {
 		function refreshAuthUser() {
@@ -94,7 +96,7 @@ export default function ProfilePage() {
 		<div className="min-h-[calc(100vh-136px)] bg-white px-4 py-5 text-slate-900 sm:px-10 sm:py-8">
 			<section className="mx-auto max-w-2xl">
 				<Link aria-label="Chỉnh sửa hồ sơ" className="group flex items-center gap-3 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-blue-500" to="/profile/edit">
-					<div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-950 text-lg font-bold text-blue-300">{authUser.name.slice(0, 2).toUpperCase()}</div>
+					<div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-blue-950 text-lg font-bold text-blue-300">{avatar.src ? <img alt="" className="h-full w-full object-cover" src={avatar.src} /> : authUser.name.slice(0, 2).toUpperCase()}</div>
 					<div className="min-w-0 flex-1"><h1 className="truncate text-lg font-black">{authUser.name}</h1><p className="truncate text-sm text-slate-500 max-sm:text-slate-300">{authUser.email}</p><p className="truncate text-xs text-slate-500">{authUser.phone || "Chưa thêm số điện thoại"}</p></div>
 					<ChevronRight className="h-5 w-5 text-slate-400 transition group-hover:translate-x-0.5" />
 				</Link>

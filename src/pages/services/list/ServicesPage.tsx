@@ -32,12 +32,19 @@ export default function ServicesPage() {
 		const result = popularServices.filter((service) => {
 			const matchesQuery = !normalizedQuery || `${service.name} ${service.provider} ${service.category}`.toLowerCase().includes(normalizedQuery);
 			const matchesCategory = category === "all" || service.category.includes(category);
-			const matchesPrice = price === "all" || (price === "under-300" ? service.price < 300000 : service.price >= 300000);
+			const matchesPrice = price === "all"
+				|| (price === "under-400" && service.price < 400000)
+				|| (price === "over-500" && service.price >= 500000);
 			const matchesDistance = distance === "all" || service.distance <= Number(distance.replace("under-", ""));
 			return matchesQuery && matchesCategory && matchesPrice && matchesDistance;
 		});
 
-		return [...result].sort((first, second) => sort === "price" ? first.price - second.price : 0);
+		return [...result].sort((first, second) => {
+			if (sort === "price-asc") return first.price - second.price;
+			if (sort === "price-desc") return second.price - first.price;
+			if (sort === "rating") return second.rating - first.rating || second.reviewCount - first.reviewCount;
+			return 0;
+		});
 	}, [category, distance, price, query, sort]);
 
 	function applySearch(event: React.FormEvent<HTMLFormElement>) {
@@ -99,7 +106,7 @@ export default function ServicesPage() {
 				<section>
 					<div className="mb-4 flex items-center justify-between gap-3">
 						<p className="text-sm text-slate-500"><strong className="text-slate-900">{filteredServices.length}</strong> dịch vụ phù hợp</p>
-						<label className="flex items-center gap-2 text-sm text-slate-600"><SlidersHorizontal className="h-4 w-4" /><span className="sr-only">Sắp xếp</span><select className="rounded-lg border border-slate-200 bg-white px-3 py-2" value={sort} onChange={(event) => setSort(event.target.value)}><option value="popular">Mặc định</option><option value="price">Giá thấp nhất</option><option value="price-desc">Giá cao nhất</option><option value=""></option></select></label>
+						<label className="flex items-center gap-2 text-sm text-slate-600"><SlidersHorizontal className="h-4 w-4" /><span className="sr-only">Sắp xếp</span><select className="rounded-lg border border-slate-200 bg-white px-3 py-2" value={sort} onChange={(event) => setSort(event.target.value)}><option value="popular">Mặc định</option><option value="rating">Đánh giá cao nhất</option><option value="price-asc">Giá thấp nhất</option><option value="price-desc">Giá cao nhất</option></select></label>
 					</div>
 					{filteredServices.length > 0 ? <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{filteredServices.map((service) => <ServiceCard key={service.id} service={service} />)}</div> : <div className="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center"><h2 className="font-bold text-slate-900">Chưa tìm thấy dịch vụ</h2><p className="mt-2 text-sm text-slate-500">Thử đổi từ khóa hoặc bộ lọc để xem thêm kết quả.</p></div>}
 				</section>
