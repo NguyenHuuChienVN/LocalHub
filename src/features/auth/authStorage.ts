@@ -4,6 +4,8 @@ export type AuthUser = {
 	email: string;
 	name: string;
 	token?: string;
+	role?: string;
+	serverInstanceId?: string;
 	phone?: string | null;
 	avatarUrl?: string | null;
 	birthDate?: string | null;

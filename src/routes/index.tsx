@@ -7,6 +7,7 @@ import ServiceDetailPage from "../pages/services/detail/ServiceDetailPage";
 import ServicesPage from "../pages/services/list/ServicesPage";
 import BookingPage from "../pages/bookings/new/BookingPage";
 import BookingsPage from "../pages/bookings/list/BookingsPage";
+import ProviderBookingsPage from "../pages/provider/bookings/ProviderBookingsPage";
 import ProvidersPage from "../pages/providers/ProvidersPage";
 import ProviderDetailPage from "../pages/providers/detail/ProviderDetailPage";
 import OffersPage from "../pages/offers/OffersPage";
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
 				children: [
 					{ path: "/bookings/new", element: <BookingPage /> },
 					{ path: "/bookings", element: <BookingsPage /> },
+					{ path: "/provider/bookings", element: <ProviderBookingsPage /> },
 					{ path: "/profile/edit", element: <EditProfilePage /> },
 				],
 			},

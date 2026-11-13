@@ -7,6 +7,8 @@ export type ServiceReview = {
 	name: string;
 	rating: number;
 	comment: string;
+	email?: string;
+	createdAt?: string;
 };
 
 export type Service = {

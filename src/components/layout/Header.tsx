@@ -127,6 +127,7 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 						{isAccountOpen && <div className="absolute right-0 top-12 z-20 w-52 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
 							<Link className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm hover:bg-slate-50" to="/profile"><UserRound className="h-4 w-4 shrink-0 text-blue-600" /> Thông tin cá nhân</Link>
 							<Link className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm hover:bg-slate-50" to="/bookings"><CalendarDays className="h-4 w-4 shrink-0 text-blue-600" /> Đơn đặt dịch vụ</Link>
+							{authUser.role === "provider" && <Link className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm hover:bg-slate-50" to="/provider/bookings"><CalendarDays className="h-4 w-4 shrink-0 text-blue-600" /> Đơn của nhà cung cấp</Link>}
 							<button className="flex h-10 w-full items-center gap-3 rounded-lg px-3 text-left text-sm text-red-600 hover:bg-red-50" onClick={handleSignOut} type="button"><LogOut className="h-4 w-4 shrink-0" /> Đăng xuất</button>
 						</div>}
 					</div> : <>
@@ -139,7 +140,7 @@ export default function Header({ showSecondaryNav = true }: HeaderProps) {
 			<div className="relative flex items-center gap-2 border-t border-slate-100 px-5 py-2 text-sm sm:hidden">
 				<button aria-expanded={isLocationOpen} aria-haspopup="listbox" className="flex items-center gap-2 font-bold text-slate-700" onClick={() => setIsLocationOpen((isOpen) => !isOpen)} type="button"><MapPin className="h-4 w-4 text-pink-500" />{selectedLocation}<ChevronDown className="h-3 w-3 text-slate-400" /></button>
 				{isLocationOpen && <div className="absolute left-5 top-10 z-30 w-52 rounded-xl border border-slate-200 bg-white p-1 shadow-lg" role="listbox" aria-label="Chọn địa điểm">{locations.map((location) => <button aria-selected={selectedLocation === location} className={`block w-full rounded-lg px-3 py-2 text-left text-sm ${selectedLocation === location ? "font-bold text-blue-600" : "text-slate-700"}`} key={location} onClick={() => handleLocationSelect(location)} role="option" type="button">{location}</button>)}</div>}
-				{authUser ? <Link className="ml-auto font-semibold text-blue-600" to="/profile">{authUser.name}</Link> : <div className="ml-auto flex items-center gap-3">
+				{authUser ? <div className="ml-auto flex items-center gap-3"><Link className="font-semibold text-blue-600" to="/profile">{authUser.name}</Link>{authUser.role === "provider" && <Link className="text-xs font-semibold text-slate-600" to="/provider/bookings">Đơn dịch vụ</Link>}</div> : <div className="ml-auto flex items-center gap-3">
 					<Link className="font-semibold text-blue-600" to="/login">Đăng nhập</Link>
 					<Link className="rounded-lg bg-blue-600 px-3 py-1.5 font-semibold text-white" to="/register">Đăng ký</Link>
 				</div>}

@@ -55,7 +55,7 @@ class InMemoryCache {
 export const apiCache = new InMemoryCache();
 
 const DEFAULT_TTL_SECONDS = 180;
-const DEFAULT_SKIP_PATHS = ["/api/auth", "/api/users", "/api/health"];
+const DEFAULT_SKIP_PATHS = ["/api/auth", "/api/users", "/api/bookings", "/api/provider", "/api/health"];
 
 function buildCacheKey(req: Request): string {
     const userId = (req as Request & { user?: { id?: string | number } }).user?.id ?? "guest";
@@ -78,7 +78,7 @@ export function cacheResponse(options: CacheResponseOptions = {}) {
     const skipPaths = options.skipPaths ?? DEFAULT_SKIP_PATHS;
 
     return (req: Request, res: Response, next: NextFunction): void => {
-        if (req.method.toUpperCase() !== "GET") {
+        if (req.method.toUpperCase() !== "GET" || req.headers.authorization) {
             next();
             return;
         }

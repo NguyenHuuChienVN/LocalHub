@@ -3,9 +3,11 @@ type LoginApiResponse = {
 	message: string;
 	data?: {
 		token: string;
+		serverInstanceId: string;
 		user: {
 			email: string;
 			full_name: string;
+			role?: string;
 			phone?: string | null;
 			avatar_url?: string | null;
 			date_of_birth?: string | null;
@@ -27,6 +29,8 @@ export type LoginResult = {
 	email: string;
 	name: string;
 	token: string;
+	role?: string;
+	serverInstanceId: string;
 	phone?: string | null;
 	avatarUrl?: string | null;
 	birthDate?: string | null;
@@ -39,6 +43,20 @@ export type LoginResult = {
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
 
+export async function getServerInstanceId(signal?: AbortSignal): Promise<string> {
+	const response = await fetch(`${API_BASE_URL}/session/status`, { signal });
+	const result = await response.json().catch(() => null) as {
+		success?: boolean;
+		data?: { serverInstanceId?: string };
+	} | null;
+
+	if (!response.ok || !result?.success || !result.data?.serverInstanceId) {
+		throw new Error("Không thể xác nhận phiên máy chủ.");
+	}
+
+	return result.data.serverInstanceId;
+}
+
 export async function loginWithIdentifier(identifier: string, password: string): Promise<LoginResult> {
 	const response = await fetch(`${API_BASE_URL}/auth/login`, {
 		method: "POST",
@@ -47,7 +65,7 @@ export async function loginWithIdentifier(identifier: string, password: string):
 	});
 	const result = await response.json().catch(() => null) as LoginApiResponse | null;
 
-	if (!response.ok || !result?.success || !result.data?.token || !result.data.user) {
+	if (!response.ok || !result?.success || !result.data?.token || !result.data.serverInstanceId || !result.data.user) {
 		throw new Error(result?.message || "Đăng nhập thất bại. Vui lòng thử lại.");
 	}
 
@@ -55,6 +73,8 @@ export async function loginWithIdentifier(identifier: string, password: string):
 		email: result.data.user.email,
 		name: result.data.user.full_name,
 		token: result.data.token,
+		role: result.data.user.role,
+		serverInstanceId: result.data.serverInstanceId,
 		phone: result.data.user.phone,
 		avatarUrl: result.data.user.avatar_url,
 		birthDate: result.data.user.date_of_birth,

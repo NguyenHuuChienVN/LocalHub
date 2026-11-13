@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { virtualProviders } from "../../features/providers/mocks";
 import HeroSearch from "./components/HeroSearch";
 import PopularServicesSection from "./components/PopularServicesSection";
+import CategorySection from "./components/CategorySection";
 
 const benefits = [
   { icon: ShieldCheck, title: "Nhà cung cấp uy tín", text: "Được xác minh trong khu vực" },
@@ -23,6 +24,7 @@ export default function HomePage() {
   return (
     <div className="mx-10 py-6 max-sm:mx-4 max-sm:py-4">
       <HeroSearch />
+      <CategorySection />
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_280px]">
         <div>
           <PopularServicesSection />

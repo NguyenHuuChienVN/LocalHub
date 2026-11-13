@@ -3,10 +3,12 @@ import express from "express";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import authRoutes from "./routes/auth.routes";
+import { customerBookingRoutes, providerBookingRoutes } from "./routes/booking.routes.ts";
 import userRoutes from "./routes/user.routes.ts";
 
 import { pool as db } from "./config/db";
 import { cacheResponse, invalidateCacheByPrefix } from "./utils/cache";
+import { serverInstanceId } from "./utils/serverInstance";
 
 const app = express();
 
@@ -46,9 +48,18 @@ app.use(cacheResponse({ ttlSeconds: 180 }));
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/bookings", customerBookingRoutes);
+app.use("/api/provider/bookings", providerBookingRoutes);
 
 app.get("/", (req, res) => {
     res.json({ message: "server đang chạy" });
+});
+
+app.get("/api/session/status", (req, res) => {
+    res.json({
+        success: true,
+        data: { serverInstanceId },
+    });
 });
 
 app.post("/api/cache/invalidate", (req, res) => {

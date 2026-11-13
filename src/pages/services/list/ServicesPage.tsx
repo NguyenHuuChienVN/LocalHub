@@ -1,5 +1,5 @@
 import { Filter, MapPin, RotateCcw, Search, SlidersHorizontal } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import ServiceCard from "../../../features/services/components/ServiceCard";
 import { popularServices, serviceCategories } from "../../../features/services/mocks";
@@ -26,6 +26,11 @@ export default function ServicesPage() {
 	const [price, setPrice] = useState("all");
 	const [distance, setDistance] = useState("all");
 	const [sort, setSort] = useState("popular");
+
+	useEffect(() => {
+		setQuery(searchParams.get("q") ?? "");
+		setCategory(searchParams.get("category") ?? "all");
+	}, [searchParams]);
 
 	const filteredServices = useMemo(() => {
 		const normalizedQuery = query.trim().toLowerCase();

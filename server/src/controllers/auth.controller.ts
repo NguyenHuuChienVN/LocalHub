@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { db } from "../config/db.ts";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { checkAntiSpam, clearSuccessfulAttempt, recordFailedAttempt } from "../utils/antiSpam";
+import { serverInstanceId } from "../utils/serverInstance";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^\+?\d{7,15}$/;
@@ -192,6 +193,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             data: {
                 user: userWithoutPassword,
                 token,
+                serverInstanceId,
             },
         });
     } catch (error: unknown){
